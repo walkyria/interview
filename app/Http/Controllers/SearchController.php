@@ -43,20 +43,4 @@ class SearchController extends Controller
             'filter' => $request->all()
         ]);
     }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
-    {
-        return [
-            'location' => 'required|string|max:255',
-            'sleeps' => 'nullable|integer',
-            'beds' => 'nullable|integer',
-            'availabilityFrom' => 'nullable|date_format:d/m/Y',
-            'availabilityTo' => 'nullable|date_format:d/m/Y'
-        ];
-    }
 }
