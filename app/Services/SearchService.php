@@ -18,6 +18,11 @@ class SearchService
     }
 
     /**
+     * This assumes location will always be provided.
+     * if Availability is not provided it will select properties that do not have
+     * bookings for the next 7 days
+     * If AcceptsPets is false then it will return properties that accepts and do not accept pets
+     * If NearBeach is false it will return all properties near, or not, to the beach
      * @param array $params
      * @return LengthAwarePaginator
      */
