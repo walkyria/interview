@@ -9,7 +9,7 @@ $factory->define(Property::class, function (Faker $faker) {
         'property_name' => $faker->name,
         'near_beach'    => $faker->boolean,
         'accepts_pets' => $faker->boolean,
-        'sleeps' => $faker->randomNumber(1),
-        'beds' => $faker->randomNumber(1)
+        'sleeps' => $faker->numberBetween(1, 10),
+        'beds' => $faker->numberBetween(1, 10)
     ];
 });

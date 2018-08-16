@@ -21,7 +21,10 @@ class SearchTest extends TestCase
         $user = factory(User::class)->create();
 
         $location = factory(Location::class)->create(['location_name' => 'location test']);
-        $property = factory(Property::class)->create(['_fk_location' => $location->__pk]);
+        $property = factory(Property::class)->create([
+            '_fk_location'  => $location->__pk,
+            'property_name' => 'test property name'
+        ]);
 
         $this->assertDatabaseHas('locations', ['__pk' => $location->__pk]);
         $this->assertDatabaseHas('properties', ['__pk' => $property->__pk]);
@@ -31,35 +34,67 @@ class SearchTest extends TestCase
         ];
 
         $response = $this->actingAs($user)->post('/search', $data);
-        $response->assertSee('location test');
+        $response->assertSee('test property name');
     }
 
     /**
-     * @group search
+     * @group searchFuture
      */
     public function testReturnsAvailablePropertyForLocationAndDatesInTheFuture()
     {
         $user = factory(User::class)->create();
         $location = factory(Location::class)->create(['location_name' => 'location test']);
-        $property = factory(Property::class)->create(['_fk_location' => $location->__pk]);
+        $property = factory(Property::class)->create([
+            '_fk_location'  => $location->__pk,
+            'property_name' => 'test property name'
+        ]);
 
         $this->assertDatabaseHas('locations', ['__pk' => $location->__pk]);
         $this->assertDatabaseHas('properties', ['__pk' => $property->__pk]);
 
         $data = [
-            'location' => $location->location_name,
+            'location'         => $location->location_name,
             'availabilityFrom' => '20/07/2018',
-            'availabilityTo' => '28/07/2018'
+            'availabilityTo'   => '28/07/2018'
         ];
         $response = $this->actingAs($user)->post('/search', $data);
-        $response->assertDontSee('location test');
+        $response->assertDontSee('test property name');
+
+        $dateFrom = Carbon::now()->addDays(2)->format('d/m/Y');
+        $dateTo = Carbon::now()->addDays(9)->format('d/m/Y');
+
+        $this->assertDatabaseMissing('bookings', [
+            'availabilityFrom' => $dateFrom,
+            'availabilityTo'   => $dateTo
+        ]);
+
+        $data = [
+            'location'         => $location->location_name,
+            'availabilityFrom' => $dateFrom,
+            'availabilityTo'   => $dateTo
+        ];
+
+        $response = $this->actingAs($user)->post('/search', $data);
+        $response->assertSee('test property name');
+    }
+
+    public function testPaginatedResults()
+    {
+        $user = factory(User::class)->create();
+        $location = factory(Location::class)->create(['location_name' => 'location test']);
+        for ($i = 0; $i < 20; $i++) {
+            factory(Property::class)->create([
+                '_fk_location' => $location->__pk
+            ]);
+        }
 
         $data = [
             'location' => $location->location_name,
-            'availabilityFrom' => Carbon::now()->addDays(2)->format('d/m/Y'),
-            'availabilityTo' => Carbon::now()->addDays(9)->format('d/m/Y')
+            'itemsPerPage' => 5
         ];
+
         $response = $this->actingAs($user)->post('/search', $data);
-        $response->assertSee('location test');
+        $response->assertSee('pagination');
+        $response->assertSee('page-link');
     }
 }

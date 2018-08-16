@@ -15,8 +15,6 @@ Route::get('/', function () {
     return view('pages.main');
 });
 
-Route::get('/users', 'UserController@index');
+//Route::get('/users', 'UserController@index');
 
-Route::get('/search-form', 'SearchController@searchForm')->name('searchForm');
-
-Route::post('/search', 'SearchController@search')->name('search');
+Route::any('/search', 'SearchController@search')->name('search');

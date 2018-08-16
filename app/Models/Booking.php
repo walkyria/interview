@@ -16,10 +16,10 @@ class Booking extends Model
      * @var array
      */
     protected $fillable = [
-        '_fk_property',
-        'start_date',
-        'end_date',
-    ];
+            '_fk_property',
+            'start_date',
+            'end_date',
+        ];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -27,8 +27,8 @@ class Booking extends Model
      * @var array
      */
     protected $casts = [
-        '_fk_property' => 'integer',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
-    ];
+            '_fk_property' => 'integer',
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
+        ];
 }

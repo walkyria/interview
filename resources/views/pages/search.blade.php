@@ -10,14 +10,23 @@
 
 @section('content')
     <div class="container">
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     <div id="form" class="row">
-        <form method="post" action="{{ route('search') }}">
-            @csrf
+        <form method="get" action="{{ route('search') }}">
+
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
                         <label for="location">Location</label>
-                        <input type="text" id="location" name="location" value="{{ old('location') }}">
+                        <input type="text" id="location" name="location" value="@isset($filter['location']){{ $filter['location'] }}@endisset">
                     </div>
                 </div>
                 <div class="row">
@@ -27,7 +36,7 @@
                                id="availabilityFrom"
                                name="availabilityFrom"
                                placeholder="dd/mm/yyyy"
-                               value="{{ old('availabilityFrom') }}"
+                               value="@isset($filter['availabilityFrom']){{ $filter['availabilityFrom'] }} @endisset"
                         >
                     </div>
                 </div>
@@ -38,35 +47,35 @@
                                id="availabilityTo"
                                name="availabilityTo"
                                placeholder="dd/mm/yyyy"
-                               value="{{ old('availabilityTo') }}"
+                               value="@isset($filter['availabilityTo']){{ $filter['availabilityTo'] }}@endisset"
                         >
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
                         <label for="sleeps">Sleeps</label>
-                        <input type="text" id="sleeps" name="sleeps" value="{{ old('sleeps') }}">
+                        <input type="text" id="sleeps" name="sleeps" value="@isset($filter['sleeps']){{ $filter['sleeps'] }}@endisset">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
                         <label for="beds">Beds</label>
-                        <input type="text" id="beds" name="beds" value="{{ old('beds') }}">
+                        <input type="text" id="beds" name="beds" value="@isset($filter['beds']){{ $filter['beds'] }}@endisset">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
                         <label for="acceptsPets">Pets</label>
-                        <input type="checkbox" id="acceptsPets" name="acceptsPets" value="{{ old('acceptsPets') }}">
+                        <input type="checkbox" id="acceptsPets" name="acceptsPets" value="1" @isset($filter['acceptsPets'])checked='checked'@endisset">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-12">
                         <label for="nearBeach">Near Beach</label>
-                        <input type="checkbox" id="nearBeach" name="nearBeach" value="{{ old('nearBeach') }}">
+                        <input type="checkbox" id="nearBeach" name="nearBeach" value="1" @isset($filter['nearBeach']) checked="checked" @endisset}}">
                     </div>
                 </div>
 
@@ -88,6 +97,7 @@
                 <div class="col-md-2">Near Beach</div>
             </div>
             @isset($result)
+                {{ $result->appends($filter)->links() }}
                 @foreach($result as $property)
                     <div class="row">
                         <div class="col-md-4">{{ $property->property_name }}</div>
