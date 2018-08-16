@@ -1,11 +1,15 @@
 <?php
 
-namespace App;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
 {
+    protected $primaryKey = '__pk';
+
+    public $timestamps = false;
+
     /**
      * The attributes that are mass assignable.
      *

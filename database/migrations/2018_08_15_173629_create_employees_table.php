@@ -15,7 +15,6 @@ class CreateEmployeesTable extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->increments('__pk');
-            $table->primary('__pk');
             $table->integer('_fk_department');
             $table->foreign('_fk_department')->references('__pk')->on('departments');
             $table->string('first_name');

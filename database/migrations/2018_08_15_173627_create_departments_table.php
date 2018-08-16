@@ -15,7 +15,6 @@ class CreateDepartmentsTable extends Migration
     {
         Schema::create('departments', function (Blueprint $table) {
             $table->increments('__pk');
-            $table->primary('__pk');
             $table->string('department_name', 255)->nullable();
         });
     }

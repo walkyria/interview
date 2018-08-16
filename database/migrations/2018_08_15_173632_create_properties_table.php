@@ -15,7 +15,6 @@ class CreatePropertiesTable extends Migration
     {
         Schema::create('properties', function (Blueprint $table) {
             $table->increments('__pk');
-            $table->primary('__pk');
             $table->integer('_fk_location')->unsigned()->nullable();
             $table->foreign('_fk_location')->references('__pk')->on('locations');
             $table->string('property_name')->nullable();
@@ -23,7 +22,6 @@ class CreatePropertiesTable extends Migration
             $table->boolean('accepts_pets')->nullable();
             $table->tinyInteger('sleeps')->unsigned()->nullable();
             $table->tinyInteger('beds')->unsigned()->nullable();
-
         });
     }
 

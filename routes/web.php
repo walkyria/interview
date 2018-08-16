@@ -16,3 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('/users', 'UserController@index');
+
+Route::get('/search-form', 'SearchController@searchForm')->name('searchForm');
+
+Route::post('/search', 'SearchController@search')->name('search');
