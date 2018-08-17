@@ -35,12 +35,12 @@ class SearchController extends Controller
         if (
             $request->filled('availabilityFrom') &&
             Carbon::createFromFormat('d/m/Y', $request->get('availabilityFrom')) < Carbon::now()) {
-            return redirect('searchForm')->withErrors('Invalid Availability From date');
+            return redirect('search-form')->withErrors('Invalid Availability From date');
         }
 
         if ($request->filled('availabilityTo') &&
             Carbon::createFromFormat('d/m/Y', $request->get('availabilityTo')) < Carbon::now()) {
-            return redirect('searchForm')->withErrors('Invalid Availability To date');
+            return redirect('search-form')->withErrors('Invalid Availability To date');
         }
 
         $result = null;
