@@ -29,6 +29,20 @@ class SearchTest extends TestCase
         self::assertEquals(200, $response->getStatusCode());
     }
 
+    public function testValidatesDateInPast()
+    {
+        $data = [
+            'location' => 'anything',
+            'availabilityFrom' => '01/01/2017',
+            'availabilityTo' => '07/01/2017'
+        ];
+
+        $response = $this->post('/search', $data);
+        //dd($response);
+        $response->assertRedirect('search-form');
+        $response->assertSessionHasErrorsIn('default');
+    }
+
     /**
      * @group search
      */
