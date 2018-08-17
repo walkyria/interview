@@ -7,11 +7,27 @@ use App\Models\Property;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class SearchTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function testSearchFormAccessibility()
+    {
+        $response = $this->get('/search-form');
+        self::assertEquals(200, $response->getStatusCode());
+    }
+
+    public function testSearchAccessibility()
+    {
+        $data = [
+            'location' => 'anything'
+        ];
+        $response = $this->post('/search', $data);
+        self::assertEquals(200, $response->getStatusCode());
+    }
 
     /**
      * @group search

@@ -18,8 +18,8 @@
             </div>
         @endif
     <div id="form" class="row">
-        <form method="get" action="{{ route('search') }}">
-
+        <form method="post" action="{{ route('search') }}">
+            @csrf
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
@@ -94,7 +94,13 @@
                 <div class="col-md-2">Accepts Pets</div>
                 <div class="col-md-2">Near Beach</div>
             </div>
-            @isset($result)
+            @if(!isset($result) || $result === null)
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>No properties found!</p>
+                    </div>
+                </div>
+            @else
                 {{ $result->appends($filter)->links() }}
                 @foreach($result as $property)
                     <div class="row">
@@ -105,7 +111,7 @@
                         <div class="col-md-2">{{ $property->near_beach }}</div>
                     </div>
                 @endforeach
-            @endisset
+            @endempty
         </div>
     </div>
 @endsection
