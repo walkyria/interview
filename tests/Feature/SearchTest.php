@@ -7,7 +7,6 @@ use App\Models\Property;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 use Tests\TestCase;
 
 class SearchTest extends TestCase
@@ -25,7 +24,7 @@ class SearchTest extends TestCase
         $data = [
             'location' => 'anything'
         ];
-        $response = $this->post('/search', $data);
+        $response = $this->get(route('search', $data));
         self::assertEquals(200, $response->getStatusCode());
     }
 
@@ -37,7 +36,7 @@ class SearchTest extends TestCase
             'availabilityTo' => '07/01/2017'
         ];
 
-        $response = $this->post('/search', $data);
+        $response = $this->get(route('search', $data));
         //dd($response);
         $response->assertRedirect('search-form');
         $response->assertSessionHasErrorsIn('default');
@@ -52,7 +51,7 @@ class SearchTest extends TestCase
 
         $location = factory(Location::class)->create(['location_name' => 'location test']);
         $property = factory(Property::class)->create([
-            '_fk_location'  => $location->__pk,
+            '_fk_location' => $location->__pk,
             'property_name' => 'test property name'
         ]);
 
@@ -63,7 +62,7 @@ class SearchTest extends TestCase
             'location' => $location->location_name
         ];
 
-        $response = $this->actingAs($user)->post('/search', $data);
+        $response = $this->get(route('search', $data));
         $response->assertSee('test property name');
     }
 
@@ -75,7 +74,7 @@ class SearchTest extends TestCase
         $user = factory(User::class)->create();
         $location = factory(Location::class)->create(['location_name' => 'location test']);
         $property = factory(Property::class)->create([
-            '_fk_location'  => $location->__pk,
+            '_fk_location' => $location->__pk,
             'property_name' => 'test property name'
         ]);
 
@@ -83,11 +82,11 @@ class SearchTest extends TestCase
         $this->assertDatabaseHas('properties', ['__pk' => $property->__pk]);
 
         $data = [
-            'location'         => $location->location_name,
+            'location' => $location->location_name,
             'availabilityFrom' => '20/07/2018',
-            'availabilityTo'   => '28/07/2018'
+            'availabilityTo' => '28/07/2018'
         ];
-        $response = $this->actingAs($user)->post('/search', $data);
+        $response = $this->get(route('search', $data));
         $response->assertDontSee('test property name');
 
         $dateFrom = Carbon::now()->addDays(2)->format('d/m/Y');
@@ -95,16 +94,16 @@ class SearchTest extends TestCase
 
         $this->assertDatabaseMissing('bookings', [
             'availabilityFrom' => $dateFrom,
-            'availabilityTo'   => $dateTo
+            'availabilityTo' => $dateTo
         ]);
 
         $data = [
-            'location'         => $location->location_name,
+            'location' => $location->location_name,
             'availabilityFrom' => $dateFrom,
-            'availabilityTo'   => $dateTo
+            'availabilityTo' => $dateTo
         ];
 
-        $response = $this->actingAs($user)->post('/search', $data);
+        $response = $this->get(route('search', $data));
         $response->assertSee('test property name');
     }
 
@@ -112,19 +111,28 @@ class SearchTest extends TestCase
     {
         $user = factory(User::class)->create();
         $location = factory(Location::class)->create(['location_name' => 'location test']);
-        for ($i = 0; $i < 20; $i++) {
-            factory(Property::class)->create([
-                '_fk_location' => $location->__pk
-            ]);
-        }
+
+        factory(Property::class)->create([
+            '_fk_location' => $location->__pk
+        ]);
 
         $data = [
             'location' => $location->location_name,
             'itemsPerPage' => 5
         ];
 
-        $response = $this->actingAs($user)->post('/search', $data);
-        $response->assertSee('pagination');
-        $response->assertSee('page-link');
+        $response = $this->get(route('search', $data));
+        $response->assertDontSee('<ul class="pagination" role="navigation">');
+        $response->assertDontSee('<li class="page-item">');
+
+        for ($i = 0; $i < 20; $i++) {
+            factory(Property::class)->create([
+                '_fk_location' => $location->__pk
+            ]);
+        }
+
+        $response = $this->get(route('search', $data));
+        $response->assertSee('<ul class="pagination" role="navigation">');
+        $response->assertSee('<li class="page-item">');
     }
 }

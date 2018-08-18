@@ -19,7 +19,7 @@
         @endif
     <div id="form" class="row">
         <form method="get" action="{{ route('search') }}">
-            
+
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-12">
