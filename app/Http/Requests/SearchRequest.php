@@ -7,11 +7,24 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SearchRequest extends FormRequest
 {
+    /**
+     * Redirect route when errors occur.
+     *
+     * @var string
+     */
+    protected $redirectRoute = 'searchForm';
+
+    /**
+     * @return bool
+     */
     public function authorize()
     {
         return true;
     }
 
+    /**
+     * @return array
+     */
     public function rules()
     {
         return [

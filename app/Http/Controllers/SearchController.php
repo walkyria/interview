@@ -47,6 +47,7 @@ class SearchController extends Controller
         if ($request->filled('location')) {
             $result = $this->searchService->findProperties($request->all());
         }
+
         return view('pages.search', [
             'result' => $result,
             'filter' => $request->all()
