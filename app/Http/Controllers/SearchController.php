@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\SearchRequest;
 use App\Services\SearchService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class SearchController extends Controller

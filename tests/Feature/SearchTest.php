@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Booking;
 use App\Models\Location;
 use App\Models\Property;
 use App\Models\User;
@@ -134,5 +135,48 @@ class SearchTest extends TestCase
         $response = $this->get(route('search', $data));
         $response->assertSee('<ul class="pagination" role="navigation">');
         $response->assertSee('<li class="page-item">');
+    }
+    /**
+     * @group search
+     */
+    public function testDoesNotReturnBookedPropertyForLocation()
+    {
+        $startDate = Carbon::now()->addDays(1);
+        $endDate = Carbon::now()->addDays(8);
+        $location = factory(Location::class)->create(['location_name' => 'location test']);
+        $property = factory(Property::class)->create([
+            '_fk_location' => $location->__pk,
+            'property_name' => 'test property name'
+        ]);
+
+        factory(Booking::class)->create([
+            '_fk_property' => $property->__pk,
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ]);
+
+        $this->assertDatabaseHas('locations', ['__pk' => $location->__pk]);
+        $this->assertDatabaseHas('properties', ['__pk' => $property->__pk]);
+
+        $data = [
+            'location' => $location->location_name,
+            'availabilityFrom' => $startDate->format('d/m/Y'),
+            'availabilityTo' => $endDate->format('d/m/Y')
+        ];
+
+        $response = $this->get(route('search', $data));
+        $response->assertDontSee('test property name');
+
+        $startDate = Carbon::now()->addDays(10);
+        $endDate = Carbon::now()->addDays(18);
+
+        $data = [
+            'location' => $location->location_name,
+            'availabilityFrom' => $startDate->format('d/m/Y'),
+            'availabilityTo' => $endDate->format('d/m/Y')
+        ];
+
+        $response = $this->get(route('search', $data));
+        $response->assertSee('test property name');
     }
 }
